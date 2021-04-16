@@ -44,7 +44,7 @@ public class HandPlayback : MonoBehaviour
             else
             {
                 string[] components = line.Split(',');
-                //Debug.Log(line);
+                // Debug.Log(line);
                 Vector3 position = new Vector3(float.Parse(components[0]), float.Parse(components[1]), float.Parse(components[2]));
                 if (init)
                 {

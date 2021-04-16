@@ -100,6 +100,9 @@ public class Database_Bone : MonoBehaviour
         if (bone_name == "root") {
             // Log position of root
             Vector3 position = new Vector3(timeline_dof[frame][0], timeline_dof[frame][1], timeline_dof[frame][2]);
+
+            position *= Database_Manager.CMU_TO_METERS;
+
             if (!timeline_global_positions.ContainsKey(frame)) {
                 timeline_global_positions.Add(frame, position);
             }

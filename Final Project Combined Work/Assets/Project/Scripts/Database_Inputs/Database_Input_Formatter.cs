@@ -9,7 +9,7 @@ public class Database_Input_Formatter : MonoBehaviour
 {    
     private Dictionary<string, Database_Bone> database_bones = new Dictionary<string, Database_Bone>();
 
-    private Dictionary<string, double> energy_for_bones = new Dictionary<string, double>();
+    internal Dictionary<string, double> energy_for_bones = new Dictionary<string, double>();
 
     internal int num_frame;
     private int current_frame = -1;
@@ -23,7 +23,7 @@ public class Database_Input_Formatter : MonoBehaviour
     // Motion:
     public void solve_for_positions() {
         current_frame = 1;
-        while (current_frame < num_frame) {
+        while (current_frame <= num_frame) {
             determine_bone_positions(current_frame);
             current_frame += 1;
         }
@@ -33,7 +33,7 @@ public class Database_Input_Formatter : MonoBehaviour
 
     public void playing_animation() {
         if (Input.GetKeyDown("space")) {
-            if (current_frame >= num_frame || current_frame < 1) {
+            if (current_frame > num_frame || current_frame < 1) {
                 current_frame = 1;
             } else {
                 current_frame += 1;
@@ -48,7 +48,7 @@ public class Database_Input_Formatter : MonoBehaviour
             play = true;
         }
 
-        if (play && current_frame < num_frame && current_frame >= 1) {
+        if (play && current_frame <= num_frame && current_frame >= 1) {
             determine_bone_positions(current_frame);
             current_frame += 1;
         }
@@ -96,15 +96,17 @@ public class Database_Input_Formatter : MonoBehaviour
                     List<string> elements = new List<string>(temp.Split(new char[] { ' ' }));
 
                     float length = float.Parse(elements[1]);
+                    length *= Database_Manager.CMU_TO_METERS;
                     database_bones[bone_name].length = length;
 
                     // Makes the bones look like bones
                     if (show_bones) {
                         GameObject visual_bone_gameObject = Instantiate(visual_bone, Vector3.zero, Quaternion.identity);
                         visual_bone_gameObject.SetActive(enable_skeleton);
-                        visual_bone_gameObject.name = bone_name + "_Bone";
-                        visual_bone_gameObject.transform.localScale = new Vector3(1, 1, length);
                         visual_bone_gameObject.transform.SetParent(database_bones[bone_name].gameObject.transform);
+                        visual_bone_gameObject.name = bone_name + "_Bone";
+                        visual_bone_gameObject.transform.localScale = new Vector3(visual_bone.transform.localScale.x, visual_bone.transform.localScale.y, length);
+                        
                     }
                     
                 } else if (file_text[i].Contains("dof")) {
@@ -137,6 +139,7 @@ public class Database_Input_Formatter : MonoBehaviour
                     database_bones[child].parent = parent_name;
                     GameObject child_bone = database_bones[child].gameObject;
                     child_bone.transform.SetParent(database_bones[parent_name].transform);
+                    // child_bone.transform.localScale = new Vector3(visual_bone.transform.localScale.x, visual_bone.transform.localScale.y, length);
                 }
             }
         }
@@ -221,6 +224,7 @@ public class Database_Input_Formatter : MonoBehaviour
             List<Vector3> velocity_vector = get_velocity_vectors(bone_name);
             List<float> energy_vector = new List<float>();
             foreach (Vector3 v in velocity_vector) {
+                // Debug.Log("bone_name: " + bone_name + "     v: " + v + "     Mathf.Pow(v.magnitude,2) * inertia[bone_name]: " + Mathf.Pow(v.magnitude, 2) * inertia[bone_name]);
                 energy_vector.Add(Mathf.Pow(v.magnitude,2) * inertia[bone_name]);
             }
 
@@ -230,7 +234,7 @@ public class Database_Input_Formatter : MonoBehaviour
     }
 
     private List<Vector3> get_velocity_vectors(string bone_name) {
-        List<Vector3> output = new List<Vector3>();
+        List<Vector3> velocity_vector = new List<Vector3>();
 
         Database_Bone bone = database_bones[bone_name];
 
@@ -240,12 +244,19 @@ public class Database_Input_Formatter : MonoBehaviour
                 Vector3 x_0 = bone.timeline_global_positions[frame];
                 Vector3 x_1 = bone.timeline_global_positions[frame + 1];
 
-                // TO DO: consider t of each frame
+                // Debug.Log("x_0: " + x_0);
+                // Debug.Log("x_1: " + x_1);
+
+
                 Vector3 v = x_1 - x_0;
-                output.Add(v);
+
+                v *= 120; // Refresh rate (Sampling rate) of the cameras
+
+
+                velocity_vector.Add(v);
             }
         }
-        return output;
+        return velocity_vector;
     }
 
     // Helper Functions:
