@@ -42,7 +42,7 @@ public class Distance_Algorithm_Manager : MonoBehaviour
         List<double> live_energy = new List<double>() { live_left_hand_energy, live_right_hand_energy };
 
         Debug.Log("live_left_hand_energy: " + live_left_hand_energy);
-        Debug.Log("live_right_hand_energy: " + live_right_hand_energy);
+        Debug.Log("live_right_hand_energy: "  + live_right_hand_energy);
 
         distance_algorithm(live_energy);
         current_classified_motion = classified_motion();

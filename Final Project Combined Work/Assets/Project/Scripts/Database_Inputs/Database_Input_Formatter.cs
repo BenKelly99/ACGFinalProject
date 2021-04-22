@@ -233,6 +233,20 @@ public class Database_Input_Formatter : MonoBehaviour
         }
     }
 
+    public List<FrameData> get_bone_frame_positions(string bone_name)
+    {
+        List<FrameData> frameData = new List<FrameData>();
+        Database_Bone bone = database_bones[bone_name];
+        foreach (int frame in bone.timeline_global_positions.Keys)
+        {
+                Vector3 pos = bone.timeline_global_positions[frame];
+                FrameData fd = new FrameData();
+                fd.position = pos;
+                frameData.Add(fd);
+        }
+        return frameData;
+    }
+
     private List<Vector3> get_velocity_vectors(string bone_name) {
         List<Vector3> velocity_vector = new List<Vector3>();
 

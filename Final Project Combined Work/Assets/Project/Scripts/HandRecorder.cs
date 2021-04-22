@@ -35,6 +35,8 @@ public class HandRecorder : MonoBehaviour
             if (!recording)
             {
                 SaveData();
+                leftFrameData.Clear();
+                rightFrameData.Clear();
                 num += 1;
             }
         }

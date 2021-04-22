@@ -79,9 +79,14 @@ public class HandPlayback : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            playing = true;
-            frame = 0;
+            play();
         }
+    }
+
+    public void play()
+    {
+        playing = true;
+        frame = 0;
     }
 
     void FixedUpdate()
@@ -96,7 +101,10 @@ public class HandPlayback : MonoBehaviour
             }
             else {
                 leftHand.transform.position = leftInit + leftFrameData[frame].position;
-                rightHand.transform.position = rightInit + rightFrameData[frame].position;
+                if(frame < rightFrameData.Count)
+                {
+                    rightHand.transform.position = rightInit + rightFrameData[frame].position;
+                }
                 frame++;
             }
         }
