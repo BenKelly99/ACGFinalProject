@@ -10,7 +10,7 @@ public class HandRecorder : MonoBehaviour
     [HideInInspector]
     public List<FrameData> leftFrameData, rightFrameData;
     public string type = "both";
-
+    public bool record_raw = true;
     private bool recording;
     private string path;
     private int num;
@@ -65,17 +65,25 @@ public class HandRecorder : MonoBehaviour
             num++;
             final_path = Path.Combine(path, mot_name + "_" + num + ".txt");
         }
+        string final_raw_path = Path.Combine(path, mot_name + "_raw_" + num + ".txt");
         print("Saving data to " + final_path);
         using (StreamWriter sw = File.CreateText(final_path))
         {
             sw.WriteLine("left");
-            WriteData(leftFrameData, sw);
+            WriteData(leftFrameData, sw, false);
             sw.WriteLine("right");
-            WriteData(rightFrameData, sw);
+            WriteData(rightFrameData, sw, false);
+        }
+        using (StreamWriter sw = File.CreateText(final_raw_path))
+        {
+            sw.WriteLine("left");
+            WriteData(leftFrameData, sw, false);
+            sw.WriteLine("right");
+            WriteData(rightFrameData, sw, false);
         }
     }
 
-    private void WriteData(List<FrameData> data, StreamWriter sw)
+    private void WriteData(List<FrameData> data, StreamWriter sw, bool raw)
     {
         Vector3 firstPos = data[0].position;
         Vector3 lastPos = data[data.Count - 1].position;
@@ -106,7 +114,11 @@ public class HandRecorder : MonoBehaviour
         foreach (FrameData fd in data)
         {
             Vector4 position = new Vector4(fd.position.x - firstPos.x, fd.position.y - firstPos.y, fd.position.z - firstPos.z, 1);
-            Vector4 newPos = changeOfBasis * position;
+            Vector4 newPos = position;
+            if (!raw)
+            {
+                newPos = changeOfBasis * position;
+            }
             sw.WriteLine(newPos.x + "," + newPos.y + "," + newPos.z);
         }
     }

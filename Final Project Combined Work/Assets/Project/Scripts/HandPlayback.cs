@@ -8,6 +8,7 @@ public class HandPlayback : MonoBehaviour
 {
     public GameObject leftHand, rightHand;
     public TextAsset motionFile;
+    public bool tracepath = false;
     private Vector3 leftInit, rightInit;
     internal List<FrameData> leftFrameData;
     internal List<FrameData> rightFrameData;
@@ -71,7 +72,6 @@ public class HandPlayback : MonoBehaviour
                 }
             }
         }
-
     }
 
     // Update is called once per frame
@@ -93,16 +93,25 @@ public class HandPlayback : MonoBehaviour
     {
         if (playing)
         {
-            Debug.Log("attempting to play");
-            if (frame >= leftFrameData.Count)
+            if (frame >= leftFrameData.Count && frame >= rightFrameData.Count)
             {
                 playing = false;
-
             }
             else {
-                leftHand.transform.position = leftInit + leftFrameData[frame].position;
+                if (frame < leftFrameData.Count)
+                {
+                    if (tracepath && frame != 0)
+                    {
+                        Debug.DrawLine(leftHand.transform.position, leftInit + leftFrameData[frame].position, Color.white, 3.0f);
+                    }
+                    leftHand.transform.position = leftInit + leftFrameData[frame].position;
+                }
                 if(frame < rightFrameData.Count)
                 {
+                    if (tracepath && frame != 0)
+                    {
+                        Debug.DrawLine(rightHand.transform.position, rightInit + rightFrameData[frame].position, Color.white, 3.0f);
+                    }
                     rightHand.transform.position = rightInit + rightFrameData[frame].position;
                 }
                 frame++;

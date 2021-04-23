@@ -329,4 +329,5 @@ MonoBehaviour:
   leftHand: {fileID: 714499083}
   rightHand: {fileID: 714499082}
   type: both
-  mot_name: jab
+  record_raw: 1
+  mot_name: uppercut
