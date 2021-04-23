@@ -330,4 +330,4 @@ MonoBehaviour:
   rightHand: {fileID: 714499082}
   type: both
   record_raw: 1
-  mot_name: uppercut
+  mot_name: idle

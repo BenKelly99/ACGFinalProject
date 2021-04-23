@@ -11,7 +11,6 @@ public class ComparisonAlgorithmManager: MonoBehaviour
 
     public float deadTimeMovementThreshhold = .025f;
     public float minDotThreshold = 0.8f;
-    public float distanceFactorThreshold = 0.05f;
 
     void Start()
     {

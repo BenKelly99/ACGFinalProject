@@ -89,13 +89,6 @@ public class ClassifingAlgorithm
             currentExamplePos = example[i].position;
             Vector3 observedDelta = currentObservedPos - previousObservedPos;
             Vector3 expectedDelta = currentExamplePos - previousExamplePos;
-            if (observedDelta.magnitude < (1 - CAM.distanceFactorThreshold) * expectedDelta.magnitude || observedDelta.magnitude > (1 + CAM.distanceFactorThreshold) * expectedDelta.magnitude)
-            {
-                Debug.Log("observed delta = " + observedDelta.magnitude);
-                Debug.Log("expected delta = " + expectedDelta.magnitude);
-                Debug.Log("Comparison failed due to distance");
-                return false;
-            }
             observedDelta.Normalize();
             expectedDelta.Normalize();
             if (Vector3.Dot(observedDelta, expectedDelta) < CAM.minDotThreshold)

@@ -250,7 +250,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: {fileID: 448202691}
   rightHand: {fileID: 1380447077}
-  motionFile: {fileID: 4900000, guid: 50005db8e231d1a4384e492a5cefe7a2, type: 3}
+  motionFile: {fileID: 4900000, guid: 3f5608ba6d314fa44b5d3f1f72c4eda1, type: 3}
   tracepath: 1
 --- !u!1 &448202691
 GameObject:
@@ -415,7 +415,6 @@ MonoBehaviour:
   example: {fileID: 1633518921}
   deadTimeMovementThreshhold: 0.02
   minDotThreshold: 0.8
-  distanceFactorThreshold: 0.2
 --- !u!1 &967103487
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,7 +699,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1460563668}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.22686322, y: -0.1408248, z: -0.29525405}
+  m_LocalPosition: {x: 0.22686322, y: -0.1408248, z: 4.761}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -737,7 +736,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: {fileID: 2083884336}
   rightHand: {fileID: 8048456}
-  motionFile: {fileID: 4900000, guid: 8c35d0550f38ed741b159c5d97fe159e, type: 3}
+  motionFile: {fileID: 4900000, guid: fb1241d028a5ca341a7f483a3df06156, type: 3}
   tracepath: 1
 --- !u!4 &1633518922
 Transform:
