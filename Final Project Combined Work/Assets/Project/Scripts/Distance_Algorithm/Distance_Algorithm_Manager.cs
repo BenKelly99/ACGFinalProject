@@ -32,7 +32,7 @@ public class Distance_Algorithm_Manager : MonoBehaviour
         foreach (string motion_name in DM.formatters.Keys) {
             foreach (Database_Input_Formatter DIF in DM.formatters[motion_name]) {
                 DIF.solve_for_energy(inertia);
-                break;
+                // break;
             }
         }
 
@@ -42,7 +42,7 @@ public class Distance_Algorithm_Manager : MonoBehaviour
         List<double> live_energy = new List<double>() { live_left_hand_energy, live_right_hand_energy };
 
         Debug.Log("live_left_hand_energy: " + live_left_hand_energy);
-        Debug.Log("live_right_hand_energy: "  + live_right_hand_energy);
+        Debug.Log("live_right_hand_energy: " + live_right_hand_energy);
 
         distance_algorithm(live_energy);
         current_classified_motion = classified_motion();
@@ -90,10 +90,8 @@ public class Distance_Algorithm_Manager : MonoBehaviour
 
 
                 string statement = "motion_name: " + motion_name + "\n";
-                // Debug.Log("motion_name: " + motion_name + "      database_left_hand_energy: " + database_left_hand_energy);
                 statement += "     database_left_hand_energy: \t\t" + database_left_hand_energy + "\n";
                 statement += "     database_right_hand_energy:\t\t" + database_right_hand_energy + "\n";
-                // Debug.Log("motion_name: " + motion_name + "      database_right_hand_energy: " + database_right_hand_energy);
 
                 Debug.Log(statement);
                 List<double> database_energy = new List<double>() { database_left_hand_energy, database_right_hand_energy };

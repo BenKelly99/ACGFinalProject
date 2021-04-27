@@ -11,7 +11,7 @@ public class Database_Input_Formatter : MonoBehaviour
 
     internal Dictionary<string, double> energy_for_bones = new Dictionary<string, double>();
 
-    internal int num_frame;
+    private int num_frame;
     private int current_frame = -1;
     private bool play = false;
 
@@ -59,6 +59,7 @@ public class Database_Input_Formatter : MonoBehaviour
 
         // TO DO: order, axis, position, orientation or root
         create_bone("root", enable_skeleton);
+        database_bones["root"].dof = new List<string>(new string[] { "tx", "ty", "tz", "rx", "ry", "rz" });
 
         List<string> file_text = new List<string>(skeleton_file.text.Split(new char[] { '\n' }));
 
@@ -120,6 +121,8 @@ public class Database_Input_Formatter : MonoBehaviour
 
                     // TO DO: The axises might be flipped around (XYZ vs YZX)
                     Vector3 axis = list_to_vector3(elements, 1);
+                    axis.y *= -1;
+                    axis.z *= -1;
                     database_bones[bone_name].rotate_axes(axis);
                 }
 
@@ -164,6 +167,10 @@ public class Database_Input_Formatter : MonoBehaviour
                 database_bones[bone_name].add_to_timeline(frame, elements);
             }
         }
+
+        num_frame = database_bones["root"].timeline_dof.Keys.Count - 1;
+        // Debug.Log(num_frame);
+
     }
 
     // Position Bones:
@@ -196,20 +203,23 @@ public class Database_Input_Formatter : MonoBehaviour
 
         bone_names.Clear();
         T_Pose();
-        bone_names.Enqueue("root");
+
+        foreach (string children in database_bones["root"].children) {
+            bone_names.Enqueue(children);
+        }
+
         while (bone_names.Count != 0) {
             Database_Bone bone = database_bones[bone_names.Dequeue()];
             // Debug.Log("On Bone " + bone.bone_name);
-            if (bone.bone_name == "root") {
-                bone.determine_position(frame, null);
-            } else {
-                statement += bone.determine_position(frame, database_bones[bone.parent]);
-            }
+            statement += bone.determine_position(frame, database_bones[bone.parent]);
 
             foreach (string children in bone.children) {
                 bone_names.Enqueue(children);
             }
         }
+
+        database_bones["root"].determine_position(frame, null);
+
 
         // Debug.Log(statement);
 
@@ -218,13 +228,10 @@ public class Database_Input_Formatter : MonoBehaviour
     // Energy Functions
     public void solve_for_energy(Dictionary<string, int> inertia) {
 
-        // TO DO: Root Rotation
-
         foreach(string bone_name in database_bones.Keys) {
             List<Vector3> velocity_vector = get_velocity_vectors(bone_name);
             List<float> energy_vector = new List<float>();
             foreach (Vector3 v in velocity_vector) {
-                // Debug.Log("bone_name: " + bone_name + "     v: " + v + "     Mathf.Pow(v.magnitude,2) * inertia[bone_name]: " + Mathf.Pow(v.magnitude, 2) * inertia[bone_name]);
                 energy_vector.Add(Mathf.Pow(v.magnitude,2) * inertia[bone_name]);
             }
 
@@ -233,39 +240,26 @@ public class Database_Input_Formatter : MonoBehaviour
         }
     }
 
-    public List<FrameData> get_bone_frame_positions(string bone_name)
-    {
-        List<FrameData> frameData = new List<FrameData>();
-        Database_Bone bone = database_bones[bone_name];
-        foreach (int frame in bone.timeline_global_positions.Keys)
-        {
-                Vector3 pos = bone.timeline_global_positions[frame];
-                FrameData fd = new FrameData();
-                fd.position = pos;
-                frameData.Add(fd);
-        }
-        return frameData;
-    }
-
     private List<Vector3> get_velocity_vectors(string bone_name) {
         List<Vector3> velocity_vector = new List<Vector3>();
 
         Database_Bone bone = database_bones[bone_name];
 
         foreach(int frame in bone.timeline_global_positions.Keys) {
+
+            // In T_Pose
+            if (frame == 0) {
+                continue;
+            }
+
             if (bone.timeline_global_positions.ContainsKey(frame + 1)){
 
                 Vector3 x_0 = bone.timeline_global_positions[frame];
                 Vector3 x_1 = bone.timeline_global_positions[frame + 1];
 
-                // Debug.Log("x_0: " + x_0);
-                // Debug.Log("x_1: " + x_1);
-
-
                 Vector3 v = x_1 - x_0;
 
-                v *= 120; // Refresh rate (Sampling rate) of the cameras
-
+                v *= 80; // Refresh rate (Sampling rate) of the cameras
 
                 velocity_vector.Add(v);
             }
@@ -274,9 +268,20 @@ public class Database_Input_Formatter : MonoBehaviour
     }
 
     // Helper Functions:
-    void reset_bones() {
-        // TO DO: RESET THE ROOT POSITION
 
+    public List<FrameData> get_bone_frame_positions(string bone_name) {
+        List<FrameData> frameData = new List<FrameData>();
+        Database_Bone bone = database_bones[bone_name];
+        foreach (int frame in bone.timeline_global_positions.Keys) {
+            Vector3 pos = bone.timeline_global_positions[frame];
+            FrameData fd = new FrameData();
+            fd.position = pos;
+            frameData.Add(fd);
+        }
+        return frameData;
+    }
+
+    void reset_bones() {
         foreach(Database_Bone bone in database_bones.Values) {
             bone.transform.position = Vector3.zero;
             bone.transform.rotation = Quaternion.identity;

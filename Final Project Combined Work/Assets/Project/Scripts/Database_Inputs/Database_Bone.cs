@@ -11,7 +11,6 @@ public class Database_Bone : MonoBehaviour
     internal Vector3 initial_direction;
     internal List<string> dof = new List<string>();
 
-    // internal Vector3 axis;
     internal Vector3 x_axis = Vector3.right;
     internal Vector3 y_axis = Vector3.up;
     internal Vector3 z_axis = Vector3.forward;
@@ -22,10 +21,10 @@ public class Database_Bone : MonoBehaviour
     internal Dictionary<int, List<float>> timeline_dof = new Dictionary<int, List<float>>();
 
     // IMPORTANT: THIS IS THE GLOBAL MIDDLE POINT OF THE BONE
+    //  Frame = 1: T_Pose
+    //  Frame > 1: The Motion
     internal Dictionary<int, Vector3> timeline_global_positions = new Dictionary<int, Vector3>();
-
-
-    // internal Vector3 total_delta_position;
+    internal Dictionary<int, Quaternion> timeline_global_rotation = new Dictionary<int, Quaternion>();
 
     // File Parsing Functions:
     public void add_to_timeline(int frame, List<string> elements) {
@@ -50,31 +49,25 @@ public class Database_Bone : MonoBehaviour
     // Position Functions
     public string T_Pose(Database_Bone parent_bone) {
 
+        // Position has already been calculated
+        if (timeline_global_positions.ContainsKey(0)) {
+            transform.position = timeline_global_positions[0];
+            return "";
+        }
+
         // The bone is the root
         if (bone_name == "root") {
-            // TO DO:
-            // Position of root
-            Vector3 position = Vector3.zero;
-
-            // TO DO:
-            // Direction of root
-            Vector3 direction = Vector3.zero;
-
-            // Visualize bone
-            gameObject.transform.localPosition = position;
-
+            gameObject.transform.localPosition = Vector3.zero;
             return "";
         }
 
         string statement = "TPOSE: bone_name: " + bone_name + "\n";
-        statement += "     transform.forward:     \t\t" + transform.forward.x + "\t\t" + transform.forward.y + "\t\t" + transform.forward.z + "\n";
-        statement += "     transform.up:     \t\t" + transform.up.x + "\t\t" + transform.up.y + "\t\t" + transform.up.z + "\n";
-
+        
         // Getting the direction of the current bone
-        Vector3 current_direction = Complex_Rotation_Bones_Axes(initial_direction, Vector3.zero);
+        Vector3 current_forward_direction = Complex_Rotation_Bones_Axes(initial_direction, Vector3.zero);
 
         // Vector of half the current bone
-        Vector3 half_bone = (length / 2) * transform.InverseTransformDirection(current_direction);
+        Vector3 half_bone = (length / 2) * transform.InverseTransformDirection(current_forward_direction);
 
         // Get local mid point and end point of current bone
         Vector3 local_mid_point = ((parent_bone.length / 2) * Vector3.forward) + half_bone;
@@ -83,12 +76,15 @@ public class Database_Bone : MonoBehaviour
         // Convert the end point to a global value
         Vector3 global_end_point = transform.TransformPoint(local_end_point);
 
-        transform.localPosition = local_mid_point;
+        // Position Bone
+        transform.localPosition = local_mid_point;  // Move Bone
+        transform.LookAt(global_end_point);         // Rotate Bone
 
-        transform.LookAt(global_end_point, transform.up);
+        // statement += "     transform.position:     \t\t" + transform.position.x + "\t\t" + transform.position.y + "\t\t" + transform.position.z + "\n";
+        // statement += "     transform.rotation:     \t\t" + transform.rotation.x + "\t\t" + transform.rotation.y + "\t\t" + transform.rotation.z + "\n";
 
-        statement += "     transform.position:     \t\t" + transform.position.x + "\t\t" + transform.position.y + "\t\t" + transform.position.z + "\n";
-        statement += "     transform.rotation:     \t\t" + transform.rotation.x + "\t\t" + transform.rotation.y + "\t\t" + transform.rotation.z + "\n";
+        statement += "     transform.forward:\t\t" + transform.forward.x + "\t\t" + transform.forward.y + "\t\t" + transform.forward.z + "\n";
+        statement += "     transform.up:     \t\t" + transform.up.x + "\t\t" + transform.up.y + "\t\t" + transform.up.z + "\n";
 
         return statement + "\n";
         // Debug.Log(statement);
@@ -96,44 +92,73 @@ public class Database_Bone : MonoBehaviour
 
     public string determine_position(int frame, Database_Bone parent_bone) {
 
-        // The bone is the root
-        if (bone_name == "root") {
-            // Log position of root
-            Vector3 position = new Vector3(timeline_dof[frame][0], timeline_dof[frame][1], timeline_dof[frame][2]);
-
-            position *= Database_Manager.CMU_TO_METERS;
-
-            if (!timeline_global_positions.ContainsKey(frame)) {
-                timeline_global_positions.Add(frame, position);
-            }
-            
-            // TO DO:
-            // Log direction of root
-            Vector3 direction = new Vector3(timeline_dof[frame][3], timeline_dof[frame][4], timeline_dof[frame][5]);
-
-            // Visualize bone
-            gameObject.transform.localPosition = position;
-            // timeline_global_positions.Add(frame, transform.position);
-
+        // Position has already been calculated
+        if (timeline_global_positions.ContainsKey(frame)) {
+            transform.position = timeline_global_positions[frame];
+            transform.rotation = timeline_global_rotation[frame];
             return "";
         }
 
-        string statement = "bone_name: " + bone_name + "     frame: " + frame + "\n";
-        // statement += "     length: " + length + "\n";
-        statement += "     transform.forward:     \t\t" + transform.forward.x + "\t\t" + transform.forward.y + "\t\t" + transform.forward.z + "\n";
-        statement += "     transform.up:     \t\t" + transform.up.x + "\t\t" + transform.up.y + "\t\t" + transform.up.z + "\n";
+        // The bone is the root
+        if (parent_bone == null) {
+            return determine_position_root(frame);
+        }
+        else {
+            return determine_position_non_root(frame, parent_bone);
+        }
+    }
+
+    string determine_position_root(int frame) {
+        // Get Position
+        Vector3 position = new Vector3(timeline_dof[frame][0], timeline_dof[frame][1], timeline_dof[frame][2]);
+
+        // Scale to the right scale
+        position *= Database_Manager.CMU_TO_METERS;
+
+        // Change Position
+        gameObject.transform.localPosition = position;
+
+        // Get Rotation 
+        Vector3 rotation_vector = dof_to_vector3(frame);
+
+        // Find forward and up directions
+        Vector3 current_forward_direction = Complex_Rotation_Bones_Axes(transform.forward, rotation_vector);
+        Vector3 current_up_direction = Complex_Rotation_Bones_Axes(transform.up, rotation_vector);
+
+        // Look at the end point of the bone in global coordinates
+        Vector3 global_end_point = current_forward_direction + position;
+        transform.LookAt(global_end_point, current_up_direction);
+
+        timeline_global_positions.Add(frame, transform.position);
+        timeline_global_rotation.Add(frame, transform.rotation);
+
+
+        return "";
+    }
+
+    string determine_position_non_root(int frame, Database_Bone parent_bone) {
+        string statement = "bone_name: " + bone_name + "     frame: " + frame + "\n";    
 
         // Rotation from .amc file
         Vector3 rotation_vector = dof_to_vector3(frame);
-        statement += "     rotation_vector: \t\t" + rotation_vector.x + "\t\t" + rotation_vector.y + "\t\t" + rotation_vector.z + "\n";
 
         // Getting the direction of the current bone
-        Vector3 current_direction = Complex_Rotation_Bones_Axes(transform.forward, rotation_vector);
-        statement += "     current_direction: \t\t" + current_direction.x + "\t\t" + current_direction.y + "\t\t" + current_direction.z + "\n";
+        Vector3 current_forward_direction = Complex_Rotation_Bones_Axes(transform.forward, rotation_vector);
+        Vector3 current_up_direction = Complex_Rotation_Bones_Axes(transform.up, rotation_vector);
+
+        statement += vector3_to_string(x_axis, "x_axis");
+        statement += vector3_to_string(y_axis, "y_axis");
+        statement += vector3_to_string(z_axis, "z_axis");
+
+        statement += vector3_to_string(rotation_vector, "rotation_vector");
+
+        statement += vector3_to_string(transform.forward,           "transform.forward            ");
+        statement += vector3_to_string(transform.up,                "transform.up                   ");
+        statement += vector3_to_string(current_forward_direction,   "current_forward_direction");
+        statement += vector3_to_string(current_up_direction,        "current_up_direction     ");
 
         // Vector of half the current bone
-        Vector3 local_half_bone = (length / 2) * transform.InverseTransformDirection(current_direction);
-        statement += "     local_half_bone: \t\t" + local_half_bone.x + "\t\t" + local_half_bone.y + "\t\t" + local_half_bone.z + "\n";
+        Vector3 local_half_bone = (length / 2) * transform.InverseTransformDirection(current_forward_direction);
 
         // Get local mid point and end point of current bone
         Vector3 local_mid_point = ((parent_bone.length / 2) * transform.InverseTransformDirection(parent_bone.transform.forward)) + local_half_bone;
@@ -141,60 +166,25 @@ public class Database_Bone : MonoBehaviour
         Vector3 local_to_parent_mid_point = parent_bone.transform.InverseTransformPoint(global_mid_point);
         Vector3 new_local_mid_point = local_to_parent_mid_point - transform.localPosition;
 
-        statement += "     new_local_mid_point: \t\t" + new_local_mid_point.x + "\t\t" + new_local_mid_point.y + "\t\t" + new_local_mid_point.z + "\n";
-
         Vector3 global_half_bone = transform.TransformPoint(local_half_bone);
         Vector3 local_to_parent_half_bone = parent_bone.transform.InverseTransformPoint(global_half_bone);
         Vector3 new_local_half_bone = local_to_parent_half_bone - transform.localPosition;
-        statement += "     new_local_half_bone: \t\t" + new_local_half_bone.x + "\t\t" + new_local_half_bone.y + "\t\t" + new_local_half_bone.z + "\n";
-
 
         transform.localPosition = new_local_mid_point;
-        if (!timeline_global_positions.ContainsKey(frame)) {
-            timeline_global_positions.Add(frame, transform.position);
-        }
 
         Vector3 local_end_point = new_local_mid_point + new_local_half_bone;
         // Convert the end point to a global value
         Vector3 global_end_point = parent_bone.transform.TransformPoint(local_end_point);
 
-        statement += "     global_end_point: \t\t" + global_end_point.x + "\t\t" + global_end_point.y + "\t\t" + global_end_point.z + "\n";
+        transform.LookAt(global_end_point, current_up_direction);
 
+        timeline_global_positions.Add(frame, transform.position);
+        timeline_global_rotation.Add(frame, transform.rotation);
 
-        transform.LookAt(global_end_point, transform.up);
-
-        statement += "     transform.up:     \t\t" + transform.up.x + "\t\t" + transform.up.y + "\t\t" + transform.up.z + "\n";
-
-        statement += "     transform.position:     \t\t" + transform.position.x + "\t\t" + transform.position.y + "\t\t" + transform.position.z + "\n";
-        statement += "     transform.rotation:     \t\t" + transform.rotation.x + "\t\t" + transform.rotation.y + "\t\t" + transform.rotation.z + "\n";
-
-
-        // Debug.Log(statement);
         return statement + "\n";
-
     }
 
-
-    /*
-        statement += "     transform.TransformPoint(local_mid_point): " + transform.TransformPoint(local_mid_point) + "\n";
-        statement += "     transform.TransformDirection(local_mid_point): " + transform.TransformDirection(local_mid_point) + "\n";
-
-        statement += "     transform.InverseTransformPoint(local_mid_point): " + transform.InverseTransformPoint(local_mid_point) + "\n";
-        statement += "     transform.InverseTransformDirection(local_mid_point): " + transform.InverseTransformDirection(local_mid_point) + "\n";
-
-        statement += "     parent_bone.transform.TransformPoint(local_mid_point): " + parent_bone.transform.TransformPoint(local_mid_point) + "\n";
-        statement += "     parent_bone.transform.TransformDirection(local_mid_point): " + parent_bone.transform.TransformDirection(local_mid_point) + "\n";
-
-        statement += "     parent_bone.transform.InverseTransformPoint(local_mid_point): " + parent_bone.transform.InverseTransformPoint(local_mid_point) + "\n";
-        statement += "     parent_bone.transform.InverseTransformDirection(local_mid_point): " + parent_bone.transform.InverseTransformDirection(local_mid_point) + "\n";
-        */
-
-
-
-
-
-    // Helper Functions:
-
+    // Rotation Functions:
     double cosine_rule(float a, float b, float angle) {
         double radians = (Math.PI / 180) * angle;
         double temp = Math.Pow(a, 2) + Math.Pow(b, 2) - (2*a*b* Math.Cos(radians));
@@ -243,9 +233,15 @@ public class Database_Bone : MonoBehaviour
         Matrix4x4 rotate_y = Create_Rotation_Matrices(y_axis, angles_rad.y);
         Matrix4x4 rotate_z = Create_Rotation_Matrices(z_axis, angles_rad.z);
 
+        Vector3 temp = rotate_z.MultiplyPoint3x4(input);
+        temp = rotate_x.MultiplyPoint3x4(temp);
+        temp = rotate_y.MultiplyPoint3x4(temp);
+
+        /*
         Vector3 temp = rotate_x.MultiplyPoint3x4(input);
         temp = rotate_y.MultiplyPoint3x4(temp);
         temp = rotate_z.MultiplyPoint3x4(temp);
+        */
 
         return temp;
     }
@@ -268,18 +264,23 @@ public class Database_Bone : MonoBehaviour
         return mat;
     }
 
+    // Helper Functions
     Vector3 dof_to_vector3(int frame) {
         float rx = 0, ry = 0, rz = 0;
         for (int i = 0; i < dof.Count; i++) {
             if (dof[i].Contains("rx")) {
                 rx = timeline_dof[frame][i];
             } else if (dof[i].Contains("ry")) {
-                ry = timeline_dof[frame][i];
+                ry = -1 * timeline_dof[frame][i];
             } else if (dof[i].Contains("rz")) {
-                rz = timeline_dof[frame][i];
+                rz = -1 * timeline_dof[frame][i];
             }
         }
         return new Vector3(rx, ry, rz);
+    }
+
+    string vector3_to_string(Vector3 vector, string name) {
+        return "     " + name + ":\t\t" + vector.x + "\t\t" + vector.y + "\t\t" + vector.z + "\n";
     }
 
 
