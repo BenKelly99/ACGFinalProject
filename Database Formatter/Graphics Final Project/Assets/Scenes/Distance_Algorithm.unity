@@ -679,20 +679,71 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9afba28569585747b5027c6fa71c339, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  current_motion_file: 0
+  current_motion_file: 1
   motion_files:
   - motion_name: T Pose
     file_name: {fileID: 4900000, guid: 71cc4cf3dc464ad46a5609f10b1e05fd, type: 3}
     skeleton_file: {fileID: 4900000, guid: dc8ca024371cc194a9aedbfcfe090836, type: 3}
-    num_frame: 2
-  - motion_name: Test
-    file_name: {fileID: 4900000, guid: 4f99e2915743efc4292d8a97e65ab44c, type: 3}
-    skeleton_file: {fileID: 4900000, guid: dc8ca024371cc194a9aedbfcfe090836, type: 3}
-    num_frame: 5
   - motion_name: Jab
     file_name: {fileID: 4900000, guid: 9a9afb3d00329e44481e9aa2fad19e8c, type: 3}
     skeleton_file: {fileID: 4900000, guid: dc8ca024371cc194a9aedbfcfe090836, type: 3}
-    num_frame: 70
+  - motion_name: Jab
+    file_name: {fileID: 4900000, guid: 188c326ac2c2c7f48a830ccd619ce11a, type: 3}
+    skeleton_file: {fileID: 4900000, guid: dc8ca024371cc194a9aedbfcfe090836, type: 3}
+  - motion_name: Jab
+    file_name: {fileID: 4900000, guid: 6c00f21f3ebdda3488ff8fbeb7205342, type: 3}
+    skeleton_file: {fileID: 4900000, guid: dc8ca024371cc194a9aedbfcfe090836, type: 3}
+  - motion_name: Jab
+    file_name: {fileID: 4900000, guid: 7caf5b7340c3bd641b90078727c956e5, type: 3}
+    skeleton_file: {fileID: 4900000, guid: dc8ca024371cc194a9aedbfcfe090836, type: 3}
+  - motion_name: Jab
+    file_name: {fileID: 4900000, guid: aae82fa83e85da8479bd37e964987534, type: 3}
+    skeleton_file: {fileID: 4900000, guid: dc8ca024371cc194a9aedbfcfe090836, type: 3}
+  - motion_name: Jab
+    file_name: {fileID: 4900000, guid: aad995902146371458131f2e6ec7d369, type: 3}
+    skeleton_file: {fileID: 4900000, guid: dc8ca024371cc194a9aedbfcfe090836, type: 3}
+  - motion_name: Jab
+    file_name: {fileID: 4900000, guid: 5a5af11370876ea45a483616ca89a0ee, type: 3}
+    skeleton_file: {fileID: 4900000, guid: dc8ca024371cc194a9aedbfcfe090836, type: 3}
+  - motion_name: Jab
+    file_name: {fileID: 4900000, guid: 6f7d0105d49d4044f8ae777bbdd3b734, type: 3}
+    skeleton_file: {fileID: 4900000, guid: dc8ca024371cc194a9aedbfcfe090836, type: 3}
+  - motion_name: Jab
+    file_name: {fileID: 4900000, guid: 2180db5aad534114badf6aae4d794dfd, type: 3}
+    skeleton_file: {fileID: 4900000, guid: dc8ca024371cc194a9aedbfcfe090836, type: 3}
+  - motion_name: Jump
+    file_name: {fileID: 4900000, guid: f78f8786909751e48bdf910ab68b0cce, type: 3}
+    skeleton_file: {fileID: 4900000, guid: 9aaef139508406145b13823e8f52883c, type: 3}
+  - motion_name: Jump
+    file_name: {fileID: 4900000, guid: 723080f8fbb859a469c3f90953d5078c, type: 3}
+    skeleton_file: {fileID: 4900000, guid: 268507cdaf0e9c7448ff1127263fd202, type: 3}
+  - motion_name: Running
+    file_name: {fileID: 4900000, guid: 3b72a0f248e5e0344817186564fea917, type: 3}
+    skeleton_file: {fileID: 4900000, guid: 6601efb7fc0339f41a7e2ad04eebb1a7, type: 3}
+  - motion_name: Running
+    file_name: {fileID: 4900000, guid: a6c8f3b657b659f478b035a7575c7861, type: 3}
+    skeleton_file: {fileID: 4900000, guid: ff6fc70bb0b2207498955c96bc25e84c, type: 3}
+  - motion_name: Walking
+    file_name: {fileID: 4900000, guid: d17b649695a8d874fa7eef27c823fdb3, type: 3}
+    skeleton_file: {fileID: 4900000, guid: cd70c130309faf54cb1ada6a52635732, type: 3}
+  - motion_name: Walking
+    file_name: {fileID: 4900000, guid: fdad317179193044ca2b68fc5ec15e76, type: 3}
+    skeleton_file: {fileID: 4900000, guid: f2992636a556073499f6510100251b32, type: 3}
+  - motion_name: Swordplay
+    file_name: {fileID: 4900000, guid: 849e49a6d114a2a4ca9a0a5d0cddb12b, type: 3}
+    skeleton_file: {fileID: 4900000, guid: 7836a1dfc7eb7b64cb70226aed2c77e5, type: 3}
+  - motion_name: Swordplay
+    file_name: {fileID: 4900000, guid: b91d7a74a79b2cf49a12af3ee69dcec4, type: 3}
+    skeleton_file: {fileID: 4900000, guid: 7836a1dfc7eb7b64cb70226aed2c77e5, type: 3}
+  - motion_name: Swordplay
+    file_name: {fileID: 4900000, guid: bd691bd3db2abda4e950a5821a695006, type: 3}
+    skeleton_file: {fileID: 4900000, guid: 7836a1dfc7eb7b64cb70226aed2c77e5, type: 3}
+  - motion_name: Swordplay
+    file_name: {fileID: 4900000, guid: 013420a687e727d48b55855c520aa6d4, type: 3}
+    skeleton_file: {fileID: 4900000, guid: 7836a1dfc7eb7b64cb70226aed2c77e5, type: 3}
+  - motion_name: Swordplay
+    file_name: {fileID: 4900000, guid: 654053ad546745e4ca40e24ed0e6aeb4, type: 3}
+    skeleton_file: {fileID: 4900000, guid: 7836a1dfc7eb7b64cb70226aed2c77e5, type: 3}
   visual_point: {fileID: 1309774857}
   visual_bone: {fileID: 850397180}
   show_bones: 1

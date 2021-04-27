@@ -18,7 +18,6 @@ public class Database_Manager : MonoBehaviour
         public string motion_name;
         public TextAsset file_name;
         public TextAsset skeleton_file;
-        public int num_frame;
     }
 
     public int current_motion_file;
@@ -36,45 +35,58 @@ public class Database_Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start() {
 
-
-        for (int i = 0; i < motion_files.Length; i++) {
-
-            Motion_Files MF = motion_files[i];
-
-            Database_Input_Formatter formatter = gameObject.AddComponent<Database_Input_Formatter>();
-
-            formatter.num_frame = MF.num_frame;
-            formatter.visual_point = visual_point;
-            formatter.visual_bone = visual_bone;
-
-            if (i == current_motion_file) {
-                formatter.parse_skeleton_file(MF.skeleton_file, show_bones, true);
-            } else {
-                formatter.parse_skeleton_file(MF.skeleton_file, show_bones, false);
+        if (current_motion_file >= 0 && current_motion_file < motion_files.Length) {
+            process_motion(current_motion_file);
+        }else {
+            for (int i = 0; i < motion_files.Length; i++) {
+                process_motion(i);
             }
+        }        
+    }
 
-            formatter.parse_motion_file(MF.file_name);
+    void process_motion(int i) {
+        Motion_Files MF = motion_files[i];
 
-            formatter.solve_for_positions();
-            
+        Database_Input_Formatter formatter = gameObject.AddComponent<Database_Input_Formatter>();
 
-            if (formatters.ContainsKey(MF.motion_name)){
-                formatters[MF.motion_name].Add(formatter);
-            } else {
-                formatters.Add(MF.motion_name, new List<Database_Input_Formatter>() { formatter });
-            }
+        
+        formatter.visual_point = visual_point;
+        formatter.visual_bone = visual_bone;
 
-            if (i == current_motion_file) {
-                formatter.T_Pose();
-                current_motion_file_name = MF.motion_name;
-                current_motion_file_index = formatters[MF.motion_name].Count - 1;
-            }
+        if (i == current_motion_file) {
+            formatter.parse_skeleton_file(MF.skeleton_file, show_bones, true);
+        } else {
+            formatter.parse_skeleton_file(MF.skeleton_file, show_bones, false);
+        }
+
+        formatter.parse_motion_file(MF.file_name);
+
+        
 
 
+        formatter.solve_for_positions();
+
+
+        if (formatters.ContainsKey(MF.motion_name)) {
+            formatters[MF.motion_name].Add(formatter);
+        } else {
+            formatters.Add(MF.motion_name, new List<Database_Input_Formatter>() { formatter });
+        }
+
+        if (i == current_motion_file) {
+            formatter.T_Pose();
+            current_motion_file_name = MF.motion_name;
+            current_motion_file_index = formatters[MF.motion_name].Count - 1;
         }
     }
 
+
+
+
     void FixedUpdate() {
-        formatters[current_motion_file_name][current_motion_file_index].playing_animation();
+        if (current_motion_file >= 0 && current_motion_file < motion_files.Length) {
+            formatters[current_motion_file_name][current_motion_file_index].playing_animation();
+        }
+        
     }
 }

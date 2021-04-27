@@ -2,22 +2,22 @@
 :FULLY-SPECIFIED
 :DEGREES
 100
-root 9.93854 17.5438 -0.869911 0 0 0
+root 0 0 0 0 0 0
 lowerback 0 0 0
-upperback 15 0 0
+upperback 0 0 0
 thorax 0 0 0
 lowerneck 0 0 0
 upperneck 0 0 0
 head 0 0 0
 rclavicle 0 0
-rhumerus 0 0 0
+rhumerus 0 10 0
 rradius 0
 rwrist 0
 rhand 0 0
 rfingers 0
 rthumb 0 0
 lclavicle 0 0
-lhumerus 0 0 0
+lhumerus 0 10 0
 lradius 0
 lwrist 0
 lhand 0 0
@@ -32,22 +32,22 @@ ltibia 0
 lfoot 0 0
 ltoes 0
 101
-root 9.93854 17.5438 -0.869911 0 0 0
+root 0 0 0 0 0 0
 lowerback 0 0 0
-upperback 30 0 0
+upperback 0 0 0
 thorax 0 0 0
 lowerneck 0 0 0
 upperneck 0 0 0
 head 0 0 0
 rclavicle 0 0
-rhumerus 0 0 0
+rhumerus 0 30 0
 rradius 0
 rwrist 0
 rhand 0 0
 rfingers 0
 rthumb 0 0
 lclavicle 0 0
-lhumerus 0 0 0
+lhumerus 0 30 0
 lradius 0
 lwrist 0
 lhand 0 0
@@ -62,22 +62,22 @@ ltibia 0
 lfoot 0 0
 ltoes 0
 102
-root 9.93854 17.5438 -0.869911 0 0 0
+root 0 0 0 0 0 0
 lowerback 0 0 0
-upperback 45 0 0
+upperback 0 0 0
 thorax 0 0 0
 lowerneck 0 0 0
 upperneck 0 0 0
 head 0 0 0
 rclavicle 0 0
-rhumerus 0 0 0
+rhumerus 0 50 0
 rradius 0
 rwrist 0
 rhand 0 0
 rfingers 0
 rthumb 0 0
 lclavicle 0 0
-lhumerus 0 0 0
+lhumerus 0 50 0
 lradius 0
 lwrist 0
 lhand 0 0
@@ -92,22 +92,22 @@ ltibia 0
 lfoot 0 0
 ltoes 0
 103
-root 9.93854 17.5438 -0.869911 0 0 0
+root 0 0 0 0 0 0
 lowerback 0 0 0
-upperback 60 0 0
+upperback 0 0 0
 thorax 0 0 0
 lowerneck 0 0 0
 upperneck 0 0 0
 head 0 0 0
 rclavicle 0 0
-rhumerus 0 0 0
+rhumerus 0 70 0
 rradius 0
 rwrist 0
 rhand 0 0
 rfingers 0
 rthumb 0 0
 lclavicle 0 0
-lhumerus 0 0 0
+lhumerus 0 70 0
 lradius 0
 lwrist 0
 lhand 0 0
@@ -122,22 +122,22 @@ ltibia 0
 lfoot 0 0
 ltoes 0
 104
-root 9.93854 17.5438 -0.869911 0 0 0
+root 0 0 0 0 0 0
 lowerback 0 0 0
-upperback 75 0 0
+upperback 0 0 0
 thorax 0 0 0
 lowerneck 0 0 0
 upperneck 0 0 0
 head 0 0 0
 rclavicle 0 0
-rhumerus 0 0 0
+rhumerus 0 90 0
 rradius 0
 rwrist 0
 rhand 0 0
 rfingers 0
 rthumb 0 0
 lclavicle 0 0
-lhumerus 0 0 0
+lhumerus 0 90 0
 lradius 0
 lwrist 0
 lhand 0 0
@@ -152,22 +152,22 @@ ltibia 0
 lfoot 0 0
 ltoes 0
 105
-root 9.93854 17.5438 -0.869911 0 0 0
+root 0 0 0 0 0 0
 lowerback 0 0 0
-upperback 90 0 0
+upperback 0 0 0
 thorax 0 0 0
 lowerneck 0 0 0
 upperneck 0 0 0
 head 0 0 0
 rclavicle 0 0
-rhumerus 0 0 0
+rhumerus 0 90 0
 rradius 0
 rwrist 0
 rhand 0 0
 rfingers 0
 rthumb 0 0
 lclavicle 0 0
-lhumerus 0 0 0
+lhumerus 0 90 0
 lradius 0
 lwrist 0
 lhand 0 0
