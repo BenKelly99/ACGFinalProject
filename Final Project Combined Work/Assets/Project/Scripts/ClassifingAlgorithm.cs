@@ -83,7 +83,7 @@ public class ClassifingAlgorithm
         Vector3 currentExamplePos = new Vector3();
         Vector3 previousObservedPos = observed[0].position;
         Vector3 previousExamplePos = example[0].position;
-        for (int i = step; i < observed.Count; i++)
+        for (int i = step; i < observed.Count; i += step)
         {
             currentObservedPos = observed[i].position;
             currentExamplePos = example[i].position;

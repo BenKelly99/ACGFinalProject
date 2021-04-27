@@ -250,7 +250,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: {fileID: 448202691}
   rightHand: {fileID: 1380447077}
-  motionFile: {fileID: 4900000, guid: 3f5608ba6d314fa44b5d3f1f72c4eda1, type: 3}
+  motionFile: {fileID: 4900000, guid: 50005db8e231d1a4384e492a5cefe7a2, type: 3}
   tracepath: 1
 --- !u!1 &448202691
 GameObject:
@@ -736,7 +736,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: {fileID: 2083884336}
   rightHand: {fileID: 8048456}
-  motionFile: {fileID: 4900000, guid: fb1241d028a5ca341a7f483a3df06156, type: 3}
+  motionFile: {fileID: 4900000, guid: 064d825e1c824b34f900a57c07002830, type: 3}
   tracepath: 1
 --- !u!4 &1633518922
 Transform:
