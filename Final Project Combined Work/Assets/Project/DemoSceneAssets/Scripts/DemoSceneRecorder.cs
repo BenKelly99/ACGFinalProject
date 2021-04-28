@@ -8,74 +8,59 @@ public class DemoSceneRecorder : MonoBehaviour
 {
     public GameObject leftHand;
     public GameObject rightHand;
+    public GameObject body;
     public int framesToRecord = 100;
 
-    public List<FrameData> globalRightFrameData;
-    public List<FrameData> globalLeftFrameData;
     [HideInInspector]
     public List<FrameData> rightFrameData;
     [HideInInspector]
     public List<FrameData> leftFrameData;
+    [HideInInspector]
+    public bool leftInvert;
+    [HideInInspector]
+    public bool rightInvert;
+    
 
     private void Start()
     {
         rightFrameData = new List<FrameData>();
         leftFrameData = new List<FrameData>();
-        globalRightFrameData = new List<FrameData>();
-        globalLeftFrameData = new List<FrameData>();
+        leftInvert = false;
+        rightInvert = false;
     }
 
     void FixedUpdate()
     {
         FrameData rightFd = new FrameData();
         rightFd.position = rightHand.transform.position;
-        if (SteamVR_Actions._default.RecordPlayback.state)
-        {
-            //Debug.Log(rightHand.transform.position);
-        }
         FrameData leftFd = new FrameData();
         leftFd.position = leftHand.transform.position;
-        globalRightFrameData.Add(rightFd);
-        globalLeftFrameData.Add(leftFd);
-        if (globalRightFrameData.Count > framesToRecord)
+        rightFrameData.Add(rightFd);
+        leftFrameData.Add(leftFd);
+        if (rightFrameData.Count > framesToRecord)
         {
-            globalRightFrameData.RemoveAt(0);
-            globalLeftFrameData.RemoveAt(0);
+            rightFrameData.RemoveAt(0);
+            leftFrameData.RemoveAt(0);
         }
-
-        leftFrameData = new List<FrameData>(globalLeftFrameData);
-        rightFrameData = new List<FrameData>(globalRightFrameData);
-    }
-    private void WriteData(List<FrameData> data, StreamWriter sw, bool raw)
-    {
-        Vector3 firstPos = data[0].position;
-        Vector3 lastPos = data[data.Count - 1].position;
-        Vector3 difference = lastPos - firstPos;
-        difference.y = 0;
-        difference.Normalize();
-        Vector3 xBasis = difference;
-        Vector3 yBasis = new Vector3(0, 1, 0);
-        Vector3 zBasis = Vector3.Cross(xBasis, yBasis);
-
-        Vector4 xRow = new Vector4(xBasis.x, xBasis.y, xBasis.z, 0);
-        Vector4 yRow = new Vector4(yBasis.x, yBasis.y, yBasis.z, 0);
-        Vector4 zRow = new Vector4(zBasis.x, zBasis.y, zBasis.z, 0);
-
-        Matrix4x4 changeOfBasis = new Matrix4x4();
-        changeOfBasis.SetRow(0, xRow);
-        changeOfBasis.SetRow(1, yRow);
-        changeOfBasis.SetRow(2, zRow);
-        changeOfBasis.SetRow(3, new Vector4(0, 0, 0, 1));
-        sw.WriteLine(firstPos.x + "," + firstPos.y + "," + firstPos.z);
-        foreach (FrameData fd in data)
+        float left_dist_begin = (leftFrameData[0].position - body.transform.position).magnitude;
+        float left_dist_end = (leftFrameData[leftFrameData.Count - 1].position - body.transform.position).magnitude;
+        if (left_dist_end < left_dist_begin)
         {
-            Vector4 position = new Vector4(fd.position.x - firstPos.x, fd.position.y - firstPos.y, fd.position.z - firstPos.z, 1);
-            Vector4 newPos = position;
-            if (!raw)
-            {
-                newPos = changeOfBasis * position;
-            }
-            sw.WriteLine(newPos.x + "," + newPos.y + "," + newPos.z);
+            leftInvert = true;
+        }
+        else
+        {
+            leftInvert = false;
+        }
+        float right_dist_begin = (rightFrameData[0].position - body.transform.position).magnitude;
+        float right_dist_end = (rightFrameData[rightFrameData.Count - 1].position - body.transform.position).magnitude;
+        if (right_dist_end < right_dist_begin)
+        {
+            rightInvert = true;
+        }
+        else
+        {
+            rightInvert = false;
         }
     }
 }

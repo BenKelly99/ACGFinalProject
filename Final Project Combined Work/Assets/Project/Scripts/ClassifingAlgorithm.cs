@@ -42,21 +42,21 @@ public class ClassifingAlgorithm
         return DoesMotionMatchFrameData(frameData, 50, handData, 120);
     }
 
-    public static void FullNormalizeMotion(List<FrameData> observed, float observedFrameRate, List<FrameData> example, float exampleFrameRate, ref List<FrameData> observedNormal, ref List<FrameData> exampleNormal)
+    public static void FullNormalizeMotion(List<FrameData> observed, float observedFrameRate, List<FrameData> example, float exampleFrameRate, ref List<FrameData> observedNormal, ref List<FrameData> exampleNormal, bool invertObserved, bool invertExample)
     {
         example = ClearDeadTime(example, exampleFrameRate);
         if (example.Count < 1)
         {
             return;
         }
-        example = NormalizeDataForRotation(example);
+        example = NormalizeDataForRotation(example, invertExample);
         example = NormalizeDataForDistance(example);
         observed = ClearDeadTime(observed, observedFrameRate);
         if (observed.Count < 1)
         {
             return;
         }
-        observed = NormalizeDataForRotation(observed);
+        observed = NormalizeDataForRotation(observed, invertObserved);
         observed = NormalizeDataForDistance(observed);
         NormalizeOverTime(observed, observedFrameRate, example, exampleFrameRate, ref observedNormal, ref exampleNormal);
     }
@@ -70,7 +70,7 @@ public class ClassifingAlgorithm
         return dist_1 >= .9 * dist_2 && dist_2 * 1.1 >= dist_1;
     }
 
-    public static bool DoesMotionMatchFrameData(List<FrameData> observed, float observedFramerate, List<FrameData> example, float exampleFrameRate)
+    public static bool DoesMotionMatchFrameData(List<FrameData> observed, float observedFramerate, List<FrameData> example, float exampleFrameRate, bool invertObserved = false, bool invertExample = false)
     {
         if (!DistanceTravelledIsReasonable(observed, example))
         {
@@ -83,7 +83,7 @@ public class ClassifingAlgorithm
         }
         List<FrameData> finalHandData = new List<FrameData>();
         List<FrameData> finalFrameData = new List<FrameData>();
-        FullNormalizeMotion(observed, observedFramerate, example, exampleFrameRate, ref finalHandData, ref finalFrameData);
+        FullNormalizeMotion(observed, observedFramerate, example, exampleFrameRate, ref finalHandData, ref finalFrameData, invertObserved, invertExample);
         if (finalFrameData.Count < 1 || finalHandData.Count < 1)
         {
             return finalFrameData.Count == finalHandData.Count;
@@ -259,6 +259,10 @@ public class ClassifingAlgorithm
         difference.y = 0;
         difference.Normalize();
         Vector3 xBasis = difference;
+        if (invert)
+        {
+            xBasis = -xBasis;
+        }
         Vector3 yBasis = new Vector3(0, 1, 0);
         Vector3 zBasis = Vector3.Cross(xBasis, yBasis);
 

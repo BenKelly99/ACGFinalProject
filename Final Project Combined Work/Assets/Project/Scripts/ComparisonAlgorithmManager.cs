@@ -35,7 +35,7 @@ public class ComparisonAlgorithmManager: MonoBehaviour
         List<FrameData> normalizedExample = new List<FrameData>();
         List<FrameData> normalizedObserved = new List<FrameData>();
 
-        ClassifingAlgorithm.FullNormalizeMotion(observed.rightFrameData, 50, example.rightFrameData, 50, ref normalizedObserved, ref normalizedExample);
+        ClassifingAlgorithm.FullNormalizeMotion(observed.rightFrameData, 50, example.rightFrameData, 50, ref normalizedObserved, ref normalizedExample, false, false);
         observed.rightFrameData = normalizedObserved;
         example.rightFrameData = normalizedExample;
 

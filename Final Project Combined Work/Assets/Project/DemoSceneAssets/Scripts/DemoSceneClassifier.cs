@@ -44,9 +44,16 @@ public class DemoSceneClassifier : MonoBehaviour
             List<FrameData> normalizedExample = new List<FrameData>();
             List<FrameData> normalizedObserved = new List<FrameData>();
 
-            ClassifingAlgorithm.FullNormalizeMotion(recorder.rightFrameData, 50, motion_map["right_jab"][0].Item2, 50, ref normalizedObserved, ref normalizedExample);
-            playback.rightFrameData = recorder.rightFrameData;
-            playback.leftFrameData = motion_map["right_jab"][0].Item2;
+            ClassifingAlgorithm.FullNormalizeMotion(recorder.rightFrameData, 50, motion_map["right_jab"][0].Item2, 50, ref normalizedObserved, ref normalizedExample, recorder.rightInvert, false);
+            playback.rightFrameData = normalizedObserved;
+            playback.leftFrameData = normalizedExample;
+
+            foreach (FrameData fd in recorder.rightFrameData)
+            {
+                Debug.Log(fd.position.x + "," + fd.position.y + "," + fd.position.z);
+            }
+
+            Debug.Log(recorder.rightInvert);
 
             Debug.Log("playback changed");
         }
@@ -58,18 +65,18 @@ public class DemoSceneClassifier : MonoBehaviour
         if (CheckForMotion("left_jab", MotionType.LEFT) && available_motions["left_jab"])
         {
             Vector3 position = recorder.leftHand.transform.position;
-            Vector3 velocity = (recorder.globalLeftFrameData[recorder.globalLeftFrameData.Count - 1].position - recorder.globalLeftFrameData[recorder.globalLeftFrameData.Count - 15].position).normalized;
+            Vector3 velocity = (recorder.leftFrameData[recorder.leftFrameData.Count - 1].position - recorder.leftFrameData[recorder.leftFrameData.Count - 15].position).normalized;
             CreateFirebolt(position, velocity);
             available_motions["left_jab"] = false;
-            StartCoroutine(EnableMotionAfterDelay("left_jab", 1.0f));
+            StartCoroutine(EnableMotionAfterDelay("left_jab", 0.5f));
         }
         if(CheckForMotion("right_jab", MotionType.RIGHT) && available_motions["right_jab"])
         {
             Vector3 position = recorder.rightHand.transform.position;
-            Vector3 velocity = (recorder.globalRightFrameData[recorder.globalRightFrameData.Count - 1].position - recorder.globalRightFrameData[recorder.globalRightFrameData.Count - 15].position).normalized;
+            Vector3 velocity = (recorder.rightFrameData[recorder.rightFrameData.Count - 1].position - recorder.rightFrameData[recorder.rightFrameData.Count - 15].position).normalized;
             CreateFirebolt(position, velocity);
             available_motions["right_jab"] = false;
-            StartCoroutine(EnableMotionAfterDelay("right_jab", 1.0f));
+            StartCoroutine(EnableMotionAfterDelay("right_jab", 0.5f));
         }
     }
 
@@ -87,22 +94,22 @@ public class DemoSceneClassifier : MonoBehaviour
         {
             if (motType == MotionType.LEFT)
             {
-                if (ClassifingAlgorithm.DoesMotionMatchFrameData(recorder.leftFrameData, 50.0f, mot.Item1, 50.0f))
+                if (ClassifingAlgorithm.DoesMotionMatchFrameData(recorder.leftFrameData, 50.0f, mot.Item1, 50.0f, recorder.leftInvert))
                 {
                     return true;
                 }
             }
             else if(motType == MotionType.RIGHT)
             {
-                if (ClassifingAlgorithm.DoesMotionMatchFrameData(recorder.rightFrameData, 50.0f,  mot.Item2, 50.0f))
+                if (ClassifingAlgorithm.DoesMotionMatchFrameData(recorder.rightFrameData, 50.0f,  mot.Item2, 50.0f, recorder.rightInvert))
                 {
                     return true;
                 }
             }
             else
             {
-                if (ClassifingAlgorithm.DoesMotionMatchFrameData(recorder.leftFrameData, 50.0f, mot.Item1, 50.0f) &&
-                    ClassifingAlgorithm.DoesMotionMatchFrameData(recorder.rightFrameData, 50.0f, mot.Item2, 50.0f))
+                if (ClassifingAlgorithm.DoesMotionMatchFrameData(recorder.leftFrameData, 50.0f, mot.Item1, 50.0f, recorder.leftInvert) &&
+                    ClassifingAlgorithm.DoesMotionMatchFrameData(recorder.rightFrameData, 50.0f, mot.Item2, 50.0f, recorder.rightInvert))
                 {
                     return true;
                 }
