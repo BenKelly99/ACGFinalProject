@@ -45,19 +45,49 @@ public class ClassifingAlgorithm
     public static void FullNormalizeMotion(List<FrameData> observed, float observedFrameRate, List<FrameData> example, float exampleFrameRate, ref List<FrameData> observedNormal, ref List<FrameData> exampleNormal)
     {
         example = ClearDeadTime(example, exampleFrameRate);
+        if (example.Count < 1)
+        {
+            return;
+        }
         example = NormalizeDataForRotation(example);
         example = NormalizeDataForDistance(example);
         observed = ClearDeadTime(observed, observedFrameRate);
+        if (observed.Count < 1)
+        {
+            return;
+        }
         observed = NormalizeDataForRotation(observed);
         observed = NormalizeDataForDistance(observed);
         NormalizeOverTime(observed, observedFrameRate, example, exampleFrameRate, ref observedNormal, ref exampleNormal);
     }
 
+    public static bool DistanceTravelledIsReasonable(List<FrameData> observed, List<FrameData> example)
+    {
+        float dist_1 = (observed[observed.Count - 1].position - observed[0].position).magnitude;
+        float dist_2 = (example[example.Count - 1].position - example[0].position).magnitude;
+        //Debug.Log("Dist 1 = " + dist_1);
+        //Debug.Log("Dist 2 = " + dist_2);
+        return dist_1 >= .9 * dist_2 && dist_2 * 1.1 >= dist_1;
+    }
+
     public static bool DoesMotionMatchFrameData(List<FrameData> observed, float observedFramerate, List<FrameData> example, float exampleFrameRate)
     {
+        if (!DistanceTravelledIsReasonable(observed, example))
+        {
+            //Debug.Log("failed due to distance");
+            return false;
+        }
+        if (observed.Count == 0 || example.Count == 0)
+        {
+            return false;
+        }
         List<FrameData> finalHandData = new List<FrameData>();
         List<FrameData> finalFrameData = new List<FrameData>();
         FullNormalizeMotion(observed, observedFramerate, example, exampleFrameRate, ref finalHandData, ref finalFrameData);
+        if (finalFrameData.Count < 1 || finalHandData.Count < 1)
+        {
+            return finalFrameData.Count == finalHandData.Count;
+        }
         return ValidFrameDataMotionMatch(finalHandData, finalFrameData);
     }
 
@@ -67,14 +97,22 @@ public class ClassifingAlgorithm
         {
             if (CheckForPartialValidity(observed, example, i))
             {
-                Debug.Log("Successful at step = " + i);
+                //Debug.Log("Successful at step = " + i);
             }
             else
             {
-                Debug.Log("Unsuccessful at step = " + i);
+                //Debug.Log("Unsuccessful at step = " + i);
+                if (i <= 2)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
-        return false;
+        return true;
     }
 
     private static bool CheckForPartialValidity(List<FrameData> observed, List<FrameData> example, int step)
@@ -93,10 +131,6 @@ public class ClassifingAlgorithm
             expectedDelta.Normalize();
             if (Vector3.Dot(observedDelta, expectedDelta) < CAM.minDotThreshold)
             {
-                Debug.Log("Comparison failed due to incorrect orientation");
-                Debug.Log("observed delta = " + observedDelta.x + "," + observedDelta.y + "," + observedDelta.z);
-                Debug.Log("expected delta = " + expectedDelta.x + "," + expectedDelta.y + "," + expectedDelta.z);
-                Debug.Log("dot product = " + Vector3.Dot(observedDelta, expectedDelta));
                 return false;
             }
         }
@@ -107,14 +141,10 @@ public class ClassifingAlgorithm
     {
         if (((float)(motion_1.Count)) / framerate_1 > ((float)(motion_2.Count)) / framerate_2)
         {
-            Debug.Log("Adjusting 2");
-            Debug.Log("mot 1 time " + motion_1.Count / framerate_1);
-            Debug.Log("mot 2 time " + motion_2.Count / framerate_2);
             motion_2 = AdjustDuration(motion_2, framerate_2, ((float)(motion_1.Count)) / framerate_1);
         }
         else if (((float)(motion_1.Count)) / framerate_1 < ((float)(motion_2.Count)) / framerate_2)
         {
-            Debug.Log("Adjusting 1");
             motion_1 = AdjustDuration(motion_1, framerate_1, ((float)(motion_2.Count)) / framerate_2);
         }
         if (framerate_1 > framerate_2)
@@ -140,11 +170,6 @@ public class ClassifingAlgorithm
             {
                 break;
             }
-            Debug.Log("i = " + i);
-            Debug.Log("frame 1 = " + frame_1_1);
-            Debug.Log("frame 2 = " + frame_1_2);
-            Debug.Log("frame count 1 = " + motion_1.Count);
-            Debug.Log("frame count 2 = " + motion_2.Count);
             Vector3 interp_position = motion_1[frame_1_1].position * frame_1_1_weight + motion_1[frame_1_2].position * frame_1_2_weight;
             FrameData fd = new FrameData();
             fd.position = interp_position;
@@ -159,9 +184,7 @@ public class ClassifingAlgorithm
     {
         List<FrameData> frameData = new List<FrameData>();
         float currentTime = motion.Count / framerate;
-        Debug.Log("Current frame count = " + motion.Count);
         int new_frame_num = (int)(target_time * framerate) + 1;
-        Debug.Log("New frame count = " + new_frame_num);
         for (int i = 0; i < new_frame_num - 1; i++)
         {
             float frame_frac = ((float)(i)) / new_frame_num * (motion.Count - 1);
@@ -169,12 +192,10 @@ public class ClassifingAlgorithm
             int frame_2 = frame_1 + 1;
             float frame_1_weight = 1 - (frame_frac - frame_1);
             float frame_2_weight = 1 - frame_1_weight;
-            Debug.Log("i = " + i);
-            Debug.Log("frame 1 = " + frame_1);
-            Debug.Log("frame 2 = " + frame_2);
-            Debug.Log("frame frac = " + frame_frac);
-            Debug.Log("frame 1 weight = " + frame_1_weight);
-            Debug.Log("frame 2 weight = " + frame_2_weight);
+            if (frame_1 >= motion.Count - 1)
+            {
+                break;
+            }
             Vector3 interp_position = motion[frame_1].position * frame_1_weight + motion[frame_2].position * frame_2_weight;
             FrameData fd = new FrameData();
             fd.position = interp_position;
@@ -230,7 +251,7 @@ public class ClassifingAlgorithm
         return newFrameData;
     }
 
-    private static List<FrameData> NormalizeDataForRotation(List<FrameData> frameData)
+    public static List<FrameData> NormalizeDataForRotation(List<FrameData> frameData, bool invert = false)
     {
         Vector3 firstPos = frameData[0].position;
         Vector3 lastPos = frameData[frameData.Count - 1].position;
@@ -257,7 +278,7 @@ public class ClassifingAlgorithm
             Vector4 position = new Vector4(data.position.x - firstPos.x, data.position.y - firstPos.y, data.position.z - firstPos.z, 1);
             Vector4 newPos = changeOfBasis * position;
             FrameData newData = new FrameData();
-            newData.position = new Vector3(position.x, position.y, position.z);
+            newData.position = new Vector3(newPos.x, newPos.y, newPos.z);
             newFrameData.Add(newData);
         }
         return newFrameData;
@@ -277,7 +298,6 @@ public class ClassifingAlgorithm
                 break;
             }
         }
-        Debug.Log("here1");
         for (int i = frameData.Count - 1; i > 0; i--)
         {
             float delta = (frameData[i].position - frameData[i - 1].position).magnitude;
@@ -287,9 +307,6 @@ public class ClassifingAlgorithm
                 break;
             }
         }
-        Debug.Log("min i = " + minI);
-        Debug.Log("max i = " + maxI);
-        Debug.Log("count = " + frameData.Count);
         for (int i = minI; i <= maxI; i++)
         {
             FrameData fd = new FrameData();

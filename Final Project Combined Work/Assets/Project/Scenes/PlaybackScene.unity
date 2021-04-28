@@ -250,7 +250,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: {fileID: 448202691}
   rightHand: {fileID: 1380447077}
-  motionFile: {fileID: 4900000, guid: 50005db8e231d1a4384e492a5cefe7a2, type: 3}
+  motionFile: {fileID: 4900000, guid: eedf90262be8cdd4087c5c0cbafd4d48, type: 3}
   tracepath: 1
 --- !u!1 &448202691
 GameObject:
@@ -413,7 +413,7 @@ MonoBehaviour:
   DB_Manager: {fileID: 0}
   observed: {fileID: 84586442}
   example: {fileID: 1633518921}
-  deadTimeMovementThreshhold: 0.02
+  deadTimeMovementThreshhold: 0
   minDotThreshold: 0.8
 --- !u!1 &967103487
 GameObject:
@@ -736,7 +736,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: {fileID: 2083884336}
   rightHand: {fileID: 8048456}
-  motionFile: {fileID: 4900000, guid: 064d825e1c824b34f900a57c07002830, type: 3}
+  motionFile: {fileID: 4900000, guid: a3e09315b5dc3544493469c2177c411b, type: 3}
   tracepath: 1
 --- !u!4 &1633518922
 Transform:

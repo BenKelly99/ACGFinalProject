@@ -74,12 +74,15 @@ public class HandRecorder : MonoBehaviour
             sw.WriteLine("right");
             WriteData(rightFrameData, sw, false);
         }
-        using (StreamWriter sw = File.CreateText(final_raw_path))
+        if (record_raw)
         {
-            sw.WriteLine("left");
-            WriteData(leftFrameData, sw, false);
-            sw.WriteLine("right");
-            WriteData(rightFrameData, sw, false);
+            using (StreamWriter sw = File.CreateText(final_raw_path))
+            {
+                sw.WriteLine("left");
+                WriteData(leftFrameData, sw, true);
+                sw.WriteLine("right");
+                WriteData(rightFrameData, sw, true);
+            }
         }
     }
 

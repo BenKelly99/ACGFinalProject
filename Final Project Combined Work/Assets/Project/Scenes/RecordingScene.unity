@@ -329,5 +329,5 @@ MonoBehaviour:
   leftHand: {fileID: 714499083}
   rightHand: {fileID: 714499082}
   type: both
-  record_raw: 1
-  mot_name: idle
+  record_raw: 0
+  mot_name: demo_jab
