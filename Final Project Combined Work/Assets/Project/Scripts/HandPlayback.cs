@@ -9,7 +9,7 @@ public class HandPlayback : MonoBehaviour
     public GameObject leftHand, rightHand;
     public TextAsset motionFile;
     public bool tracepath = false;
-    private Vector3 leftInit, rightInit;
+    internal Vector3 leftInit, rightInit;
     internal List<FrameData> leftFrameData;
     internal List<FrameData> rightFrameData;
     int frame = 0;
@@ -105,6 +105,7 @@ public class HandPlayback : MonoBehaviour
                         Debug.DrawLine(leftHand.transform.position, leftInit + leftFrameData[frame].position, Color.white, 3.0f);
                     }
                     leftHand.transform.position = leftInit + leftFrameData[frame].position;
+                   
                 }
                 if(frame < rightFrameData.Count)
                 {
@@ -113,6 +114,9 @@ public class HandPlayback : MonoBehaviour
                         Debug.DrawLine(rightHand.transform.position, rightInit + rightFrameData[frame].position, Color.white, 3.0f);
                     }
                     rightHand.transform.position = rightInit + rightFrameData[frame].position;
+                    Debug.Log("offset = " + rightFrameData[frame].position.x + "," + rightFrameData[frame].position.y + "," + rightFrameData[frame].position.z);
+                    Debug.Log("left init = " + rightInit);
+                    Debug.Log("new pos = " + (rightInit + rightFrameData[frame].position));
                 }
                 frame++;
             }

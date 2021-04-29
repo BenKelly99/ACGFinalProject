@@ -45,14 +45,14 @@ public class ClassifingAlgorithm
     public static void FullNormalizeMotion(List<FrameData> observed, float observedFrameRate, List<FrameData> example, float exampleFrameRate, ref List<FrameData> observedNormal, ref List<FrameData> exampleNormal, bool invertObserved, bool invertExample)
     {
         example = ClearDeadTime(example, exampleFrameRate);
-        if (example.Count < 1)
+        if (example.Count < 20)
         {
             return;
         }
-        example = NormalizeDataForRotation(example, invertExample);
+        //example = NormalizeDataForRotation(example, invertExample);
         example = NormalizeDataForDistance(example);
-        observed = ClearDeadTime(observed, observedFrameRate);
-        if (observed.Count < 1)
+        //observed = ClearDeadTime(observed, observedFrameRate);
+        if (observed.Count < 20)
         {
             return;
         }
@@ -72,13 +72,13 @@ public class ClassifingAlgorithm
 
     public static bool DoesMotionMatchFrameData(List<FrameData> observed, float observedFramerate, List<FrameData> example, float exampleFrameRate, bool invertObserved = false, bool invertExample = false)
     {
+        if (observed.Count == 0 || example.Count == 0)
+        {
+            return false;
+        }
         if (!DistanceTravelledIsReasonable(observed, example))
         {
             //Debug.Log("failed due to distance");
-            return false;
-        }
-        if (observed.Count == 0 || example.Count == 0)
-        {
             return false;
         }
         List<FrameData> finalHandData = new List<FrameData>();

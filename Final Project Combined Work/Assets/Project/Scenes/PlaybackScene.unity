@@ -250,7 +250,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: {fileID: 448202691}
   rightHand: {fileID: 1380447077}
-  motionFile: {fileID: 4900000, guid: eedf90262be8cdd4087c5c0cbafd4d48, type: 3}
+  motionFile: {fileID: 4900000, guid: b2657d9b33e4e3943aed8e274dac247a, type: 3}
   tracepath: 1
 --- !u!1 &448202691
 GameObject:
@@ -557,7 +557,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1380447078
 Transform:
   m_ObjectHideFlags: 0
@@ -736,7 +736,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: {fileID: 2083884336}
   rightHand: {fileID: 8048456}
-  motionFile: {fileID: 4900000, guid: a3e09315b5dc3544493469c2177c411b, type: 3}
+  motionFile: {fileID: 4900000, guid: b2657d9b33e4e3943aed8e274dac247a, type: 3}
   tracepath: 1
 --- !u!4 &1633518922
 Transform:
@@ -801,7 +801,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2083884337
 Transform:
   m_ObjectHideFlags: 0

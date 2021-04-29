@@ -6,7 +6,7 @@ using Valve.VR;
 
 public class HandRecorder : MonoBehaviour
 {
-    public GameObject leftHand, rightHand;
+    public GameObject leftHand, rightHand, body;
     [HideInInspector]
     public List<FrameData> leftFrameData, rightFrameData;
     public string type = "both";
@@ -70,30 +70,37 @@ public class HandRecorder : MonoBehaviour
         using (StreamWriter sw = File.CreateText(final_path))
         {
             sw.WriteLine("left");
-            WriteData(leftFrameData, sw, false);
+            WriteData(leftFrameData, sw);
             sw.WriteLine("right");
-            WriteData(rightFrameData, sw, false);
-        }
-        if (record_raw)
-        {
-            using (StreamWriter sw = File.CreateText(final_raw_path))
-            {
-                sw.WriteLine("left");
-                WriteData(leftFrameData, sw, true);
-                sw.WriteLine("right");
-                WriteData(rightFrameData, sw, true);
-            }
+            WriteData(rightFrameData, sw);
         }
     }
 
-    private void WriteData(List<FrameData> data, StreamWriter sw, bool raw)
+    private void WriteData(List<FrameData> data, StreamWriter sw)
     {
         Vector3 firstPos = data[0].position;
         Vector3 lastPos = data[data.Count - 1].position;
+
+        float dist_begin = (firstPos - body.transform.position).magnitude;
+        float dist_end = (lastPos - body.transform.position).magnitude;
+        bool invert;
+        if (dist_end < dist_begin)
+        {
+            invert = true;
+        }
+        else
+        {
+            invert = false;
+        }
+
         Vector3 difference = lastPos - firstPos;
         difference.y = 0;
         difference.Normalize();
         Vector3 xBasis = difference;
+        if (invert)
+        {
+            xBasis = -xBasis;
+        }
         Vector3 yBasis = new Vector3(0, 1, 0);
         Vector3 zBasis = Vector3.Cross(xBasis, yBasis);
 
@@ -117,11 +124,7 @@ public class HandRecorder : MonoBehaviour
         foreach (FrameData fd in data)
         {
             Vector4 position = new Vector4(fd.position.x - firstPos.x, fd.position.y - firstPos.y, fd.position.z - firstPos.z, 1);
-            Vector4 newPos = position;
-            if (!raw)
-            {
-                newPos = changeOfBasis * position;
-            }
+            Vector4 newPos = changeOfBasis * position;
             sw.WriteLine(newPos.x + "," + newPos.y + "," + newPos.z);
         }
     }

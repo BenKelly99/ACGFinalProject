@@ -283,6 +283,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 144230, guid: dc06161b6d97feb419f45f03b62e14b9, type: 3}
   m_PrefabInstance: {fileID: 714499081}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &714499084 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 191996, guid: dc06161b6d97feb419f45f03b62e14b9, type: 3}
+  m_PrefabInstance: {fileID: 714499081}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1240543729
 GameObject:
   m_ObjectHideFlags: 0
@@ -328,6 +333,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: {fileID: 714499083}
   rightHand: {fileID: 714499082}
+  body: {fileID: 714499084}
   type: both
   record_raw: 0
-  mot_name: demo_jab
+  mot_name: demo_center
